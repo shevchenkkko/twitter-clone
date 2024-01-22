@@ -1,0 +1,28 @@
+.like-button {
+    text-decoration: none; 
+    color: gray; 
+}
+
+  .bi-heart-fill {
+    fill: grey; 
+}
+
+.follow-btn {
+    text-decoration: none;
+    color: gray;
+}
+.follow-btn:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+
+.count {
+    font-weight: bold;
+    color: black;
+}
+.dropdown-button {
+    background-color: transparent;
+    border: none;
+    color: #000; /* Колір тексту */
+}

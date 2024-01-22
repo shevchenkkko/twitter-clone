@@ -1,0 +1,14 @@
+{% extends 'main/base.html'%}
+{%block content %}
+
+<h1 class="text-center">Registration</h1>
+<div class="col-md-8 offset-md-2">
+    <form method="post">
+        {% csrf_token%}
+        {{form.as_p}}
+        <button type="submit" class="btn btn-primary btn-block mt-2">Sing Up</button>
+        <p>Already have an account?<a href="{% url 'login'%}">Log In!</a></p>
+    </form>   
+</div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'main/base.html'%}
+
+{%block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">Add a New Post</div>
+          <div class="card-body">
+            <form action="#" method="post" id="postForm">
+                {%csrf_token%}
+                {{form.as_p}}
+                <br>
+                <button type="submit" class="btn btn-primary btn-block">Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

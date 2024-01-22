@@ -1,0 +1,30 @@
+{%extends 'main/base.html'%}
+{%load static %}
+{%block content %}
+    <h1>Followers</h1>
+    <br>
+    {%if profile.followed_by.all %}
+        {%for follower in profile.followed_by.all %}
+            <div class="follower-container d-flex  mb-3">
+                {% if follower.profile_photo %}
+                    <img src="{{ follower.profile_photo.url }}" class="rounded-circle mr-3" width="50" height="50">
+                {% else %}
+                    <img src="{% static 'img/default_profile_pic.png'%}" class="rounded-circle mr-3" width="50" height="50">
+                {% endif %} &nbsp;             
+                <div class="follower-info">
+                    <strong>{{ follower.user.username|capfirst }}</strong> &nbsp;
+                    {% if follower in request.user.profile.follows.all %}
+                        <a href="{% url 'unfollow' follower.user.id%}"> <i class="fa-solid fa-user-minus"></i></a>
+                    {% else %}
+                        <a href="{% url 'follow' follower.user.id%}"><i class="fa-solid fa-user-plus"></i></a> 
+                    {% endif %}
+                    <br>
+                    <a href="{% url 'profile' follower.user.pk %}" class="text-muted">@{{ follower.user.username|lower }}</a>
+                    <p>{{ follower.bio }}</p>
+                    
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+{%endblock%}

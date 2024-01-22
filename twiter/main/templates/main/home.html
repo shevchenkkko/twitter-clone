@@ -1,0 +1,24 @@
+{% extends 'main/base.html'%}
+{% load static%}
+{%block content %}
+<h1>All Tweets</h1>
+<br>
+{% for tweet in tweets%}
+  {%if tweet.author.profile.profile_photo%}
+  <img src="{{ tweet.author.profile.profile_photo.url }}" class="rounded-circle mr-3"  width="50" height="50">
+  {%else%}
+  <img src="{% static 'img/default_profile_pic.png'%}" class="rounded-circle mr-3"  width="50" height="50">
+  {%endif%}
+    <strong>{{tweet.author.username}}</strong> <a href="{% url 'profile' tweet.author.id%}" class="text-muted">@{{tweet.author.username|lower}}</a> · <span class="text-muted">{{ tweet.time_ago }}</span>
+    <br> 
+    <p>{{tweet.content}}</p>
+    {% if request.user in tweet.likes.all%}
+    <a class="like-button" href="{% url 'like_post' tweet.pk %}"><i class="fa-solid fa-heart" style="color:red"></i> {{tweet.count_likes }} </a>
+    {%else%}
+    <a class="like-button" href="{% url 'like_post' tweet.pk %}"> <i class="fa-regular fa-heart" style="color:red"></i> {{tweet.count_likes }} </a>
+    {%endif%}
+    <hr>
+{% endfor %}
+
+
+{% endblock %}

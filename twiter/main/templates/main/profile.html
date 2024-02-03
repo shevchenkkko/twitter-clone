@@ -51,7 +51,8 @@
                         <a class="like-button" href="{% url 'like_post' tweet.pk %}"><i class="fa-solid fa-heart" style="color:red"></i> {{tweet.count_likes }} </a>
                     {%else%}
                         <a class="like-button" href="{% url 'like_post' tweet.pk %}"> <i class="fa-regular fa-heart" style="color:red"></i> {{tweet.count_likes }} </a>
-                    {%endif%}
+                    {%endif%} &nbsp;
+                    <a class="comment-button" href="{% url 'comment' tweet.pk %}"> <i class="fa-solid fa-comment"></i> {{tweet.comments.count}} </a>
                     <hr>
                 {% endfor %}
             {% endif %}        

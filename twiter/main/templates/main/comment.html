@@ -1,0 +1,41 @@
+{% extends 'main/base.html'%}
+{% load static%}
+{% load humanize %}
+{%block content %}
+<div class="row">
+    <div class="col-8">
+        {%if tweet.comments.all%}
+            <h2>Comments...</h2> <br>
+            {% for comment in tweet.comments.all %}
+            <div class="comment-container">
+                {% if comment.user.profile.profile_photo %}
+                    <img src="{{ comment.user.profile.profile_photo.url }}" class="rounded-circle mr-3" width="35" height="35">
+                {% else %}
+                    <img src="{% static 'img/default_profile_pic.png' %}" class="rounded-circle mr-3" width="35" height="35">
+                {% endif %}
+                <div class="comment-text">
+                    <strong>{{ comment.user.username }}</strong> - <small>{{ comment.created_at|naturaltime }}</small>
+                    <p>{{ comment.content }}</p>
+                </div>
+            </div>
+            <hr>
+            {% endfor %}
+        {%else%}
+        <div class="d-flex align-items-center justify-content-center p-5">
+            <h1>No comments yet. Be the first!</h1>
+        </div>
+        {%endif%}
+    </div>
+    <div class="col-4">
+        {%if request.user.is_authenticated%}
+        <form action="" method="post">
+            {%csrf_token%}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-primary btn-block">Post</button>
+        </form>
+        {%else%}
+        <h2><a class="sign-in" href="{% url 'login'%}">Sign in</a> to write a comment</h2>
+        {%endif%}
+    </div>
+</div>
+{% endblock  %}

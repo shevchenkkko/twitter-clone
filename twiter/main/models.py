@@ -14,6 +14,8 @@ def user_profile_photo_path(instance, filename):
     return os.path.join('images/', filename)
 
 
+  
+
 class Tweet(models.Model):
     title = models.CharField(max_length=255,verbose_name = 'Заголовок')
     author = models.ForeignKey(User, on_delete=models.CASCADE,verbose_name = 'Автор')
@@ -25,7 +27,7 @@ class Tweet(models.Model):
     views = models.IntegerField(default = 0,verbose_name = 'Перегляди')
     likes = models.ManyToManyField(User, related_name='tweet_likes', blank=True,verbose_name = 'Вподобання')
     retweets = models.ManyToManyField(User, related_name='tweet_retweets', blank=True,verbose_name = 'Поширення')
-    comments = models.ForeignKey('Comment',related_name='tweet_comments', blank=True,verbose_name = 'Коментарі', on_delete = models.CASCADE, null=True)
+    
 
     class Meta:
         verbose_name = 'Tweet'
@@ -40,6 +42,20 @@ class Tweet(models.Model):
     
     def count_likes(self):
         return self.likes.count()
+
+    def count_comments(self):
+        return self.comments.count()
+
+
+class Comment(models.Model):
+    content = models.TextField(max_length=300)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tweet = models.ForeignKey('Tweet', on_delete=models.CASCADE, related_name='comments')
+
+    def __str__(self):
+        return f'{self.user.username} - {self.content[:50]}'
+  
 
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE, verbose_name = 'Користувач')
@@ -64,14 +80,6 @@ class Profile(models.Model):
     def count_followers(self):
         return self.followed_by.count()
 
-class Comment(models.Model):
-    content = models.TextField(max_length=280)
-    created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tweet = models.ForeignKey(Tweet, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.user.username} - {self.content[:50]}'
 
 
 #Create profile when new user signs up

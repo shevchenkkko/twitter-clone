@@ -1,7 +1,7 @@
 from django.utils import timezone
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib import messages
-from .models import *
+from main.models import *
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from .forms import *
 from django.contrib.auth import login, logout, authenticate
@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 
 
 def home(request):
+    tweets = Tweet.objects.filter(views__gt=10)
     if request.method == "POST":
         search_data = request.POST['search']
         tweets = Tweet.objects.filter(content__contains = search_data )
@@ -111,9 +112,22 @@ def logout_user(request):
 def register_user(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
+        username = request.POST['username']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        form.username = username
+        form.first_name = first_name
+        form.last_name = last_name
+        form.email = email
+        form.password1 = password1
+        form.password2 = password2
         if form.is_valid():
-            user = form.save()
-            login(request,user)
+            form.save()
+            user = authenticate(request, username=username, password=password1)
+            login(request, user)
             messages.success(request, 'Реєстрація пройшла успішно')
             return redirect('home')
         else:
@@ -221,3 +235,26 @@ def edit_tweet(request, pk):
         messages.error(request, 'You Must Be Logged In To View This Page!')
         return redirect(request.META.get("HTTP_REFERER"))  
             
+
+
+def add_comment(request, pk):
+    redirect_url = reverse('comment', args=[pk])
+    tweet = get_object_or_404(Tweet, pk=pk)    
+    if request.method=="POST":
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                c=form.save(commit=False)
+                c.user = request.user
+                c.tweet = tweet
+                c.save()
+                return redirect(redirect_url)
+            else:
+                messages.error(request, 'Try again...')
+        else:
+            messages.error(request, 'You Must Be Logged In To View This Page!')
+            return redirect(request.META.get("HTTP_REFERER")) 
+    else:
+        form = CommentForm()
+    return render(request, 'main/comment.html', {'form':form, 'tweet':tweet})
+

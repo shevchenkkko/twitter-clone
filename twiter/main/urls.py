@@ -16,4 +16,5 @@ urlpatterns = [
     path('unfollow/<int:pk>', unfollow , name='unfollow'),
     path('delete_tweet/<int:pk>', delete_tweet , name='delete_tweet'),
     path('edit_tweet/<int:pk>', edit_tweet , name='edit_tweet'),
+    path('comment/<int:pk>', add_comment , name='comment'),
 ]

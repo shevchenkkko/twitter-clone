@@ -1,12 +1,18 @@
 {% extends 'main/base.html'%}
+{%load static%}
 {%block content %}
 
 <h1 class="text-center">Registration</h1>
 <div class="col-md-8 offset-md-2">
-    <form method="post">
+    <form method="post" class="custom-form">
         {% csrf_token%}
-        {{form.as_p}}
-        <button type="submit" class="btn btn-primary btn-block mt-2">Sing Up</button>
+            <label for="" >Username  <input type="text" placeholder="Username" name="username"></label>
+            <label for="" >First Name   <input type="text" placeholder="First name" name="first_name"></label>
+            <label for="" >Last Name  <input type="text" placeholder="Last name" name="last_name"></label>
+            <label for="" >Email  <input type="email" placeholder="Email" name="email"></label>
+            <label for="" >Password<input type="password" placeholder="Password" name="password1"></label>
+            <label for="" >Confirm password <input type="password" placeholder="Confirm password" name="password2"></label>
+            <button type="submit" class="btn btn-primary btn-block mt-2">Sing Up</button>
         <p>Already have an account?<a href="{% url 'login'%}">Log In!</a></p>
     </form>   
 </div>

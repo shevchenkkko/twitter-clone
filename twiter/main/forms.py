@@ -1,5 +1,5 @@
 from django import forms
-from .models import Tweet,Profile
+from .models import Tweet,Profile, Comment
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 class TweetForm(forms.ModelForm):
@@ -75,3 +75,11 @@ class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields =('bio','profile_photo','youtube_link','insta_link', )
+
+
+class CommentForm(forms.ModelForm):
+    content  = forms.CharField(label="Add comment", widget=forms.Textarea(attrs={'class':'form-control'}))
+
+    class Meta:
+        model = Comment
+        fields = ('content', )

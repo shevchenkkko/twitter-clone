@@ -55,7 +55,7 @@ class CommentAdmin(admin.ModelAdmin):
     list_display_links=['id','user','content']
     search_fields=['content','user']
     list_filter=['user','tweet']
-    fields=('content','user', 'created_at','tweet')
+    fields=('content','user', 'created_at','tweet', 'likes')
     readonly_fields = ('created_at',) 
     save_on_top= True
 

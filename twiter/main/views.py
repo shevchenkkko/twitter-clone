@@ -31,7 +31,7 @@ def profile_list(request):
             profiles = Profile.objects.exclude(user=request.user)
         return render(request, 'main/profile_list.html', {'profiles':profiles, 'search':search})
     else:
-        messages.success(request, ("Must be logged in to view this page"))
+        messages.success(request, ("You Must Be Logged In To View This Page!"))
         return redirect('home')
 
 def profile(request, pk ):
@@ -53,7 +53,7 @@ def profile(request, pk ):
             current_user_profile.save()
         return render(request, 'main/profile.html', {'profile':profile, 'tweets':tweets})
     else:
-        messages.success(request, ("Must be logged in to view this page"))
+        messages.success(request, ("You Must Be Logged In To View This Page!"))
         return redirect('home')
 
 def profile_following(request, pk):
@@ -61,7 +61,7 @@ def profile_following(request, pk):
         profile = Profile.objects.get(user_id = pk)
         return render(request, 'main/following.html', {'profile':profile})
     else:
-        messages.success(request, ("Must be logged in to view this page"))
+        messages.success(request, ("You Must Be Logged In To View This Page!"))
         return redirect('home')
 
 
@@ -70,7 +70,7 @@ def profile_followers(request, pk):
         profile = Profile.objects.get(user_id = pk)
         return render(request, 'main/followers.html', {'profile':profile})
     else:
-        messages.success(request, ("Must be logged in to view this page"))
+        messages.success(request, ("You Must Be Logged In To View This Page!"))
         return redirect('home')
 
 
@@ -95,10 +95,10 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request,user)
-            messages.success(request, ("Ви були успішно залогінені"))
+            messages.success(request, ("You Have Been Successfully Logged In"))
             return redirect('home')
         else:
-            messages.error(request, ("Спробуйте ще раз"))
+            messages.error(request, ("Try Again!"))
             return redirect('login')
     else:
         return render(request, 'main/login.html')        
@@ -112,26 +112,13 @@ def logout_user(request):
 def register_user(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        username = request.POST['username']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        form.username = username
-        form.first_name = first_name
-        form.last_name = last_name
-        form.email = email
-        form.password1 = password1
-        form.password2 = password2
         if form.is_valid():
-            form.save()
-            user = authenticate(request, username=username, password=password1)
+            user = form.save()
             login(request, user)
-            messages.success(request, 'Реєстрація пройшла успішно')
+            messages.success(request, 'Registration Was Successful')
             return redirect('home')
         else:
-            messages.error(request, 'Помилка реєстрації')
+            messages.error(request, 'Registration Error')
     else:
         form = UserRegisterForm()
     return render(request, 'main/register.html', {'form':form})
@@ -171,6 +158,18 @@ def like_post(request, pk):
         messages.error(request, 'You Must Be Logged In To View This Page!')
         return redirect('home')
     
+
+def like_comment(request, pk):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk=pk)
+        if comment.likes.filter(pk=request.user.pk):
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+        return redirect(request.META.get("HTTP_REFERER"))
+    else:
+        messages.error(request, 'You Must Be Logged In To View This Page!')
+        return redirect('home')
 
 
 def follow(request, pk):
@@ -258,3 +257,42 @@ def add_comment(request, pk):
         form = CommentForm()
     return render(request, 'main/comment.html', {'form':form, 'tweet':tweet})
 
+def delete_comment(request, pk):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, id=pk)
+        if request.user.username == comment.user.username:
+            comment.delete()
+            messages.success(request, 'The Comment Has Been Deleted')
+            return redirect(request.META.get("HTTP_REFERER"))
+        else:
+            messages.error(request, 'You Do Not Own This Comment')
+            return redirect('home')
+    
+    else:
+        messages.error(request, 'You Must Be Logged In To View This Page!')
+        return redirect(request.META.get("HTTP_REFERER"))  
+
+
+def edit_comment(request, pk):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, id=pk)
+        tweet = get_object_or_404(Tweet, pk=comment.tweet.pk)    
+        redirect_url = reverse('comment', args=[comment.tweet.pk])
+        if request.user.username == comment.user.username:
+            if request.method=="POST":
+                form = CommentForm(request.POST or None, instance=comment)
+                if form.is_valid():
+                    comment = form.save(commit=False)
+                    comment.user = request.user
+                    comment.save()
+                    messages.success(request, 'The Comment Has Been Edited')
+                    return redirect(redirect_url)
+            else:
+                form = CommentForm(instance=comment)
+            return render(request, 'main/edit_comment.html', {'form':form, 'tweet':tweet} )
+        else:
+            messages.error(request, 'You Do Not Own This Comment')
+            return redirect('home')
+    else:
+        messages.error(request, 'You Must Be Logged In To View This Page!')
+        return redirect(request.META.get("HTTP_REFERER"))  

@@ -16,9 +16,9 @@ class TweetForm(forms.ModelForm):
         fields = ('title','content',)
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class':'form-control'}))
-    first_name = forms.CharField(label='First name', max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
-    last_name = forms.CharField(label='Last name', max_length=100, widget=forms.TextInput(attrs={'class':'form-control'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}))
+    first_name = forms.CharField(label='First name', max_length=100, widget=forms.TextInput(attrs={'class':'form-control','placeholder':'First Name'}))
+    last_name = forms.CharField(label='Last name', max_length=100, widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Last Name'}))
 
 
     class Meta:
@@ -29,7 +29,7 @@ class UserRegisterForm(UserCreationForm):
         super(UserRegisterForm, self).__init__(*args, **kwargs)
 
         self.fields['username'].widget.attrs['class'] = 'form-control'
-        self.fields['username'].widget.attrs['placeholder']='User Name'
+        self.fields['username'].widget.attrs['placeholder']='Username'
         self.fields['username'].label = 'Username'
         self.fields['username'].help_text = ""
 
